@@ -13,6 +13,17 @@ let selectedWord = words[Math.floor(Math.random() * words.length)];
 const correctLetters = ['w', 'i', 'z', 'a', 'r', 'd'];
 const wrongLetters = [];
 
+function updateWrongLetterEl() {
+  console.log('update!');
+}
+
+function showNotification() {
+  notification.classList.add('show');
+  setTimeout(() => {
+    notification.classList.remove('show');
+  }, 2000);
+}
+
 function displayWord() {
   wordEl.innerHTML = `
 ${selectedWord
@@ -34,3 +45,26 @@ ${selectedWord
 }
 
 displayWord();
+
+// keydown event listener
+window.addEventListener('keydown', e => {
+  if (e.keyCode >= 65 && e.keyCode <= 90) {
+    let letter = e.key;
+    if (selectedWord.includes(letter)) {
+      if (!correctLetters.includes(letter)) {
+        correctLetters.push(letter);
+
+        displayWord();
+      } else {
+        showNotification();
+      }
+    } else {
+      if (!wrongLetters.includes(letter)) {
+        wrongLetters.push(letter);
+        updateWrongLetterEl();
+      } else {
+        showNotification();
+      }
+    }
+  }
+});
