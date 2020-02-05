@@ -5,19 +5,39 @@ const notification = document.getElementById('notification-container');
 const finalMsg = document.getElementById('final-message');
 const playAgain = document.getElementById('play-button');
 
-const figureParts = document.querySelectorAll('.figure-part');
+const figureParts = Array.from(document.querySelectorAll('.figure-part'));
 
 const words = ['frontend', 'javascript', 'wizard', 'programming'];
 let selectedWord = words[Math.floor(Math.random() * words.length)];
 // console.log(selectedWord);
-const correctLetters = ['w', 'i', 'z', 'a', 'r', 'd'];
+const correctLetters = [];
 const wrongLetters = [];
 
 function updateWrongLetterEl() {
-  console.log('update!');
+  wrongLetEl.innerHTML = `
+    ${wrongLetters.length > 0 ? `<p>Wrong</p>` : ''}
+    ${wrongLetters.map(letter => `<span>${letter}</span>`)}
+    `;
+  // display figure
+  figureParts.forEach((part, index) => {
+    const errors = wrongLetters.length;
+
+    if (index < errors) {
+      part.style.display = 'block';
+    } else {
+      part.style.display = 'none';
+    }
+  });
+
+  // check if lost
+  if (wrongLetters.length === figureParts.length) {
+    popup.style.display = 'flex';
+    finalMsg.innerText = 'Unfortunately, you lost 😞';
+  }
 }
 
 function showNotification() {
+  // Display wrong letters
   notification.classList.add('show');
   setTimeout(() => {
     notification.classList.remove('show');
@@ -67,4 +87,14 @@ window.addEventListener('keydown', e => {
       }
     }
   }
+});
+
+playAgain.addEventListener('click', () => {
+  correctLetters.splice(0);
+  wrongLetters.splice(0);
+
+  selectedWord = words[Math.floor(Math.random() * words.length)];
+  displayWord();
+  updateWrongLetterEl();
+  popup.style.display = 'none';
 });
